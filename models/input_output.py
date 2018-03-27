@@ -12,7 +12,7 @@ cloneMap = "input_maps/clone.map"
 ldd = "input_maps/ldd.map"
 
 # dem: elevation
-dem = "input_maps/dem_50m_gems.map"
+dem = "input_maps/dem_10m.map"
 
 # leave area index (m2.m-2) 
 # - observed by students in the field
