@@ -55,25 +55,37 @@ regolithTable = "inputs/regolith_table.txt"
 # output file names (all in pcraster formats)
 ########################################################################
 
+# file names for paramaters derived during the run
+# - slope (m.m-1), estimated from elevation (dem) 
+slopeFileName = "outputs/slope_m_per_m.map"
+# - vegetationCover (dimensionless, fraction 0 to 1)
+vegetationCoverFileName = "outputs/vegetation_cover_fraction.map"
+# - leafAreaIndex (m2.m-2)
+leafAreaIndexFileName = "outputs/leaf_area_index_m2_per_m2.map"
+
+#~ plantHeight, canopyCover, groundCover - IN PROGRESS
+
+
 # output file names:
 # - annual precipitation (m.year-1)
-precipitationYearFileName = "output/precipitation_m_per_year.map"
+precipitationYearFileName = "outputs/precipitation_m_per_year.map"
 # - annual infiltration (m.year-1)
-infiltrationYearFileName = "output/infiltration_m_per_year.map"
+infiltrationYearFileName = "outputs/infiltration_m_per_year.map"
 # - annual runoff (m.year-1)
-runoffYearFileName = "output/runoff_m_per_year.map"
-# - slope (m.m-1), estimated from elevation (dem) 
-slopeFileName = "output/slope_m_per_m.map"
+runoffYearFileName = "outputs/runoff_m_per_year.map"
 # - annual detachment by raindrop/splash (kg.m-2.year-1) - not limited by transport capacity
-detachmentByRaindropFileName = "output/splash_detachment_kg_per_m2_per_year.map"
+detachmentByRaindropFileName = "outputs/splash_detachment_kg_per_m2_per_year.map"
 # - annual detachment by runoff (kg.m-2.year-1) - not limited by transport capacity
-detachmentByRunoffFileName = "output/flow_detachment_kg_per_m2_per_year.map"
+detachmentByRunoffFileName = "outputs/flow_detachment_kg_per_m2_per_year.map"
 # - annual total detachment (kg.m-2.year-1) - not limited by transport capacity
-totalDetachmentFileName = "output/total_detachment_kg_per_m2_per_year.map"
+totalDetachmentFileName = "outputs/total_detachment_kg_per_m2_per_year.map"
 # - annual transport capacity (kg.m-2.year-1) 
-transportCapacityFileName = "output/transport_capacity_kg_per_m2_per_year.map"
+transportCapacityFileName = "outputs/transport_capacity_kg_per_m2_per_year.map"
 # - annual total erosion (kg.m-2.year-1) - limited by transport capacity
-erosionFileName = "output/erosion_kg_per_m2_per_year.map"
+erosionFileName = "outputs/erosion_kg_per_m2_per_year.map"
+
+
+
 
 ########################################################################
 
@@ -143,33 +155,6 @@ erodibilityK = lookupscalar(regolithTable, 3, regolithCode)
 factorC = spatial(scalar(valueForFactorC))
 #~ aguila(factorC)  
 
-
-
-########################################################################
-# output file names (all in pcraster formats)
-########################################################################
-
-# output file names:
-# - annual precipitation (m.year-1)
-precipitationYearFileName = "outputs/precipitation_m_per_year.map"
-# - annual infiltration (m.year-1)
-infiltrationYearFileName = "outputs/infiltration_m_per_year.map"
-# - annual runoff (m.year-1)
-runoffYearFileName = "outputs/runoff_m_per_year.map"
-# - slope (m.m-1), estimated from elevation (dem) 
-slopeFileName = "outputs/slope_m_per_m.map"
-# - annual detachment by raindrop/splash (kg.m-2.year-1) - not limited by transport capacity
-detachmentByRaindropFileName = "outputs/splash_detachment_kg_per_m2_per_year.map"
-# - annual detachment by runoff (kg.m-2.year-1) - not limited by transport capacity
-detachmentByRunoffFileName = "outputs/flow_detachment_kg_per_m2_per_year.map"
-# - annual total detachment (kg.m-2.year-1) - not limited by transport capacity
-totalDetachmentFileName = "outputs/total_detachment_kg_per_m2_per_year.map"
-# - annual transport capacity (kg.m-2.year-1) 
-transportCapacityFileName = "outputs/transport_capacity_kg_per_m2_per_year.map"
-# - annual total erosion (kg.m-2.year-1) - limited by transport capacity
-erosionFileName = "outputs/erosion_kg_per_m2_per_year.map"
-
-########################################################################
 
 
 
