@@ -1,26 +1,36 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import time as py_time
 from pcraster import *
 
+import input_output
+
+# get the current time (for calculating calculation time needed) 
+start_time = py_time.time()
+
+print("Model calculations starts.")
+
 # clone map: defining the model extent (of study area), including model resolution  
-cloneMap = "input_maps/clone.map"
+cloneMap = input_output.cloneMap
 setclone(cloneMap)
 
 # ldd: drainage direction
-ldd = "input_maps/ldd.map"
+ldd = input_output.ldd
 
 # dem: elevation
-dem = "input_maps/dem_50m_gems.map"
+dem = input_output.dem
 
 # mask: area of interest
 mask = defined(ldd)
 
 # leave area index (m2.m-2) 
 # - observed by students in the field
-leafAreaIndex = 5.0
+leafAreaIndex = input_output.leafAreaIndex
 
 # proportion of the pixel containing vegetation (dimensionless, fraction 0 to 1) 
 # - observed by students in the field (???) #TODO: Check this comment. 
-vegetationCover = 0.8 
+vegetationCover = input_output.vegetationCover 
 
 
 ########################################################################
@@ -29,9 +39,9 @@ vegetationCover = 0.8
 
 # precipitation
 # - typical rainfall intensity (m.hr-1) of the event
-precipitationIntensityEvent = 40./1000.
+precipitationIntensityEvent = input_output.precipitationIntensityEvent
 # - duration (hr) of the event
-precipitationDuration = 2.0
+precipitationDuration = input_output.precipitationDuration
 # - amount of precipitation of the event (m)
 precipitationEvent = precipitationIntensityEvent * precipitationDuration
 
@@ -47,7 +57,7 @@ netRainfall = vegetationCover * throughfall + (1.0 - vegetationCover) * precipit
 
 # infiltration capacity
 # - saturated conductivity of the top soil (m.hr-1), measured by students or from table
-kSat = 0.01  
+kSat = input_output.kSat
 # - infiltration capacity of the event (m)
 infiltrationCapacity = kSat * precipitationDuration
 
@@ -64,7 +74,7 @@ infiltrationEvent = accuthresholdstate(ldd, netRainfall, infiltrationCapacity)
 ########################################################################
 
 # number of rainfall events in a year
-numberOfEvents = 10.
+numberOfEvents = input_output.numberOfEvents
 # runoff in a year (m.year-1) - accumulated along ldd
 runoffYear = runoffEvent * numberOfEvents
 # infiltration in a year (m.year-1)
@@ -75,20 +85,21 @@ precipitationYear = precipitationEvent * numberOfEvents
 # reporting/saving yearly values to pcraster files (and displaying them via aguila) - only in the mask area (area of interest)
 # - runoff
 runoffYear = ifthen(mask, scalar(runoffYear))
-runoffYearFileName = "output/runoff_m_per_year.map"
+runoffYearFileName = input_output.runoffYearFileName
 report(runoffYear, runoffYearFileName)
 #~ aguila(runoffYearFileName)
 # - infiltration
 infiltrationYear = ifthen(mask, scalar(infiltrationYear))
-infiltrationYearFileName = "output/infiltration_m_per_year.map"
+infiltrationYearFileName = input_output.infiltrationYearFileName
 report(infiltrationYear, infiltrationYearFileName)
 #~ aguila(infiltrationYearFileName)
 # - precipitation
 precipitationYear = ifthen(mask, scalar(precipitationYear))
-precipitationYearFileName = "output/precipitation_m_per_year.map"
+precipitationYearFileName = input_output.precipitationYearFileName
 report(precipitationYear, precipitationYearFileName)
 #~ aguila(precipitationYearFileName)
 
+print("Hydrology calculation is done.")
 
 ########################################################################
 # soil erosion model
@@ -101,7 +112,7 @@ fractionInterceptedRain = (precipitationEvent - netRainfall) / precipitationEven
 effectiveRainfallYear = fractionInterceptedRain * precipitationYear
 
 # proportion/fraction of canopy cover within a cell (dimensionless, fraction 0 to 1)
-canopyCover = 0.2  
+canopyCover = input_output.canopyCover
 
 # annual leaf drainage (m.year-1): throughfall through canopy/leaf
 leafDrainageYear = effectiveRainfallYear * canopyCover
@@ -112,7 +123,7 @@ directThroughfallYear = effectiveRainfallYear - leafDrainageYear
 # plant height (m)
 # - needed for estimating kinematic energy, see below
 # - representing the height from which raindrops fall from the crop or vegetation cover to the ground surface
-plantHeight = 12.
+plantHeight = input_output.plantHeight
 
 # typical rainfall intensity of the event in mm.hr-1
 # - needed for estimating kinematic energy, see below
@@ -129,7 +140,7 @@ kineticEnergyByLeafDrainage = max(0.0, kineticEnergyByLeafDrainage)
 kineticEnergy = kineticEnergyByDirectThroughfall + kineticEnergyByLeafDrainage
 
 # erodibility (g.J-1) of the soil (symbolized as K in Morgan, 2001, Equation 9)
-erodibilityK = 0.5  
+erodibilityK = input_output.erodibilityK
 
 # soil particle detachment (kg.m-2) by raindrop impact (symbolized as F in Morgan, 2001, Equation 9)
 # - for a year
@@ -142,7 +153,7 @@ runoffYearMilimeter = runoffYear * 1000.
 # - slope in m.m-1, estimated from elevation (dem) 
 slope = slope(dem)
 # - saving slope file
-slopeFileName = "output/slope_m_per_m.map"
+slopeFileName = input_output.slopeFileName
 report(slope, slopeFileName) 
 # - slope in degree (symbolized as S in Morgan, 2001, Equation 10)
 slopeS = atan(slope)
@@ -150,21 +161,22 @@ slopeS = atan(slope)
 
 # soil resistance, based on the cohesion 
 # - cohesion (unit: kPa) of the soil - symbolyzed as COH in Morgan, 2001
-cohesion = 2.
+cohesion = input_output.cohesion
 # - resistance of the soil (symbolized as Z in Morgan, 2001, Equation 10)
 resistanceZ = (1.0 / (0.5 * cohesion))
 
 # ground cover percentage (dimensionless, fraction 0 to 1)
-groundCover = 0.4
+groundCover = input_output.groundCover
 
 # soil particle detachment (kg.m-2) by runoff (symbolized as H  in Morgan, 2001, Equation 10)
 # - for a year
 detachmentByRunoffH = resistanceZ * pow(runoffYearMilimeter, 1.5) * sin(slopeS) * (1.0 - groundCover) * 0.001
+#~ aguila(detachmentByRunoffH)
 
 # crop or plant cover factor (symbolized as C in Morgan, 2001)
 # - this factor is to take account different tillage practices and levels of crop residue retention
 # - needed to estimate transport capacity (Equation 12 in Morgan, 2001)
-factorC = 1.0 
+factorC = input_output.factorC
 
 # transport capacity (kg.m-2) of erosion (symbolized as TC in Morgan, 2001, Equation 12)
 # - for a year
@@ -180,23 +192,28 @@ erosion = min(transportCapacity, totalDetachment)
 
 # reporting/saving yearly values to pcraster files (and displaying them via aguila) - only in the mask area (area of interest)
 # - detachment by raindrop/splash - not limited by transport capacity
-detachmentByRaindropFileName = "output/splash_detachment_kg_per_m2_per_year.map"
+detachmentByRaindropFileName = input_output.detachmentByRaindropFileName
 report(detachmentByRaindropF, detachmentByRaindropFileName)
 #~ aguila(detachmentByRaindropFileName)
 # - detachment by runoff - not limited by transport capacity
-detachmentByRunoffFileName = "output/flow_detachment_kg_per_m2_per_year.map"
+detachmentByRunoffFileName = input_output.detachmentByRunoffFileName
 report(detachmentByRunoffH, detachmentByRunoffFileName)
 #~ aguila(detachmentByRunoffFileName)
 # - total detachment  - not limited by transport capacity
-totalDetachmentFileName = "output/total_detachment_kg_per_m2_per_year.map"
+totalDetachmentFileName = input_output.totalDetachmentFileName
 report(totalDetachment, totalDetachmentFileName)
 #~ aguila(totalDetachmentFileName)
 # - transport capacity 
-transportCapacityFileName = "output/transport_capacity_kg_per_m2_per_year.map"
+transportCapacityFileName = input_output.transportCapacityFileName
 report(transportCapacity, transportCapacityFileName)
 #~ aguila(transportCapacityFileName)
 # - total erosion - limited by transport capacity
-erosionFileName = "output/erosion_kg_per_m2_per_year.map"
+erosionFileName = input_output.erosionFileName
 report(erosion, erosionFileName)
 #~ aguila(erosionFileName)
 
+print("Soil erosion calculation is done.")
+
+# Reporting calculation time needed (seconds) 
+calculation_time = round(py_time.time() - start_time, 2)
+print("Total calculation time (seconds): " + str(calculation_time))
