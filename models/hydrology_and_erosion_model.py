@@ -14,6 +14,7 @@ print("Model starts.")
 # input values/maps
 ########################################################################
 
+
 # clone map: defining the model extent (of study area), including model resolution  
 cloneMap = "inputs/clone.map"
 
@@ -23,6 +24,7 @@ ldd = "inputs/ldd.map"
 # dem: elevation
 dem = "inputs/dem_10m.map"
 
+
 # precipitation
 # - typical rainfall intensity (m.hr-1) of the event
 precipitationIntensityEvent = 40./1000.
@@ -31,21 +33,28 @@ precipitationDuration = 2.0
 # - number of rainfall events in a year
 numberOfEvents = 10.
 
+
+
 # vegetationCode: a map of vegetation units
 vegetationCode = nominal("inputs/vegetation.map")
 # vegetationTable: a table of vegetation parameters (vegetationCover, leafAreaIndex, canopyCover, groundCover, plantHeight) for each vegetation class/code observed in the field
 vegetationTable = "inputs/vegetation_table.txt"
+# - see also "inputs/vegetation_table_readme.txt"
 
 # crop or plant cover factor (symbolized as C in Morgan, 2001)
 # - this factor is to take account tillage practices and levels of crop residue retention
 # - needed to estimate transport capacity (Equation 12 in Morgan, 2001)
-# - Note: No spatial variation. 
+# - Note: No spatial variation. Hence, we don't have to read it from the table. 
 valueForFactorC = 1.0 
 
-# regolithcode: regolith units
+
+# regolithcode: a map of regolith units
 regolithCode = nominal("inputs/regolith.map")
-# regolithTable: regolith parameters (Ksat, K, C) observed in field
+# regolithTable: a table of regolith parameters (kSat, cohesion, erodibilityK) observed in the field
 regolithTable = "inputs/regolith_table.txt"
+# - see also "inputs/regolith_table_readme.txt"
+
+
 
 ########################################################################
 
@@ -55,18 +64,30 @@ regolithTable = "inputs/regolith_table.txt"
 # output file names (all in pcraster formats)
 ########################################################################
 
-# file names for paramaters derived during the run
+# file names for parameters derived during the model calculation
 # - slope (m.m-1), estimated from elevation (dem) 
 slopeFileName = "outputs/slope_m_per_m.map"
 # - vegetationCover (dimensionless, fraction 0 to 1)
 vegetationCoverFileName = "outputs/vegetation_cover_fraction.map"
 # - leafAreaIndex (m2.m-2)
 leafAreaIndexFileName = "outputs/leaf_area_index_m2_per_m2.map"
+# - plantHeight (m)
+plantHeightFileName = "outputs/plant_height_m.map"
+# - canopyCover (dimensionless, fraction 0 to 1)
+canopyCoverFileName = "outputs/canopy_cover_fraction.map"
+# - groundCover (dimensionless, fraction 0 to 1)
+groundCoverFileName = "outputs/ground_cover_fraction.map"
+# - factorC: this factor is to take account tillage practices and levels of crop residue retention - needed to estimate transport capacity - Equation 12 in Morgan, 2001
+factorCFileName = "outputs/factor_c_transport_capacity.map"
+# - kSat: saturated conductivity of the top soil (m.hr-1)
+kSatFileName = "outputs/soil_saturated_conductivity_m_per_hour.map"
+# - cohesion: soil cohesion (unit: kPa) of the soil - symbolyzed as COH in Morgan, 2001
+cohesionFileName = "outputs/soil_cohesion_kilo_pascal.map"
+# - erodibilityK: erodibility (g.J-1) of the soil - symbolized as K in Morgan, 2001, Equation 9
+erodibilityFileName = "outputs/soil_erodibility_gram_per_joule.map"
 
-#~ plantHeight, canopyCover, groundCover - IN PROGRESS
 
-
-# output file names:
+# model simulation output file names:
 # - annual precipitation (m.year-1)
 precipitationYearFileName = "outputs/precipitation_m_per_year.map"
 # - annual infiltration (m.year-1)
@@ -91,7 +112,7 @@ erosionFileName = "outputs/erosion_kg_per_m2_per_year.map"
 
 
 
-# set the clone map  
+# set the clone map 
 setclone(cloneMap)
 
 # set the mask: area of interest
@@ -104,31 +125,27 @@ mask = defined(ldd)
 setglobaloption("matrixtable")
 
 
+
 ####### vegetation parameters: vegetationCover, leafAreaIndex, plantHeight, canopyCover, groundCover 
 # - All of them are read from a lookup table (vegetationTable) based on the vegetation map (vegetationCode).
 ############################################################################################################
 
 # proportion of the pixel containing vegetation (dimensionless, fraction 0 to 1) 
 vegetationCover = lookupscalar(vegetationTable, 1, vegetationCode)
-#~ aguila(vegetationCover)
 
 # leave area index (m2.m-2) 
 leafAreaIndex = lookupscalar(vegetationTable, 2, vegetationCode)
-#~ aguila(leafAreaIndex)
 
 # plant height (m)
 # - representing the height from which raindrops fall from the crop or vegetation cover to the ground surface
 # - needed for estimating kinematic energy,
 plantHeight = lookupscalar(vegetationTable, 3, vegetationCode)
-#~ aguila(plantHeight)
 
 # proportion/fraction of canopy cover within a cell (dimensionless, fraction 0 to 1)
 canopyCover = lookupscalar(vegetationTable, 4, vegetationCode)
-#~ aguila(canopyCover)
-  
+
 # ground cover percentage (dimensionless, fraction 0 to 1)
 groundCover = lookupscalar(vegetationTable, 5, vegetationCode)
-#~ aguila(groundCover)
 
 
 ####### regolith parameters: kSat, cohesion, erodibilityK, factorC 
@@ -136,27 +153,43 @@ groundCover = lookupscalar(vegetationTable, 5, vegetationCode)
 # - Note that the factorC is defined above (see the variable: valueForFactorC). 
 ###################################################################################################################
 
-# saturated conductivity of the top soil (m.hr-1), measured by students or from table
-# - needed for estimating infiltration capacity
+# saturated conductivity of the top soil (m.hr-1), needed for estimating infiltration capacity
 kSat = lookupscalar(regolithTable, 1, regolithCode)  
-#~ aguila(kSat)
 
 # soil cohesion (unit: kPa) of the soil - symbolyzed as COH in Morgan, 2001
 cohesion = lookupscalar(regolithTable, 2, regolithCode)
-#~ aguila(cohesion)
 
 # erodibility (g.J-1) of the soil (symbolized as K in Morgan, 2001, Equation 9)
 erodibilityK = lookupscalar(regolithTable, 3, regolithCode)
-#~ aguila(erodibilityK)  
 
 # crop or plant cover factor (symbolized as C in Morgan, 2001)
 # - this factor is to take account different tillage practices and levels of crop residue retention
 # - needed to estimate transport capacity (Equation 12 in Morgan, 2001)
 factorC = spatial(scalar(valueForFactorC))
-#~ aguila(factorC)  
 
 
+# reporting/saving model vegetation and regolith parameters to pcraster files (and displaying them via aguila)
+report(vegetationCover, vegetationCoverFileName)
+#~ aguila(vegetationCoverFileName)
+report(leafAreaIndex, leafAreaIndexFileName)
+#~ aguila(leafAreaIndexFileName)
+report(plantHeight, plantHeightFileName)
+#~ aguila(plantHeightFileName)
+report(canopyCover, canopyCoverFileName)
+#~ aguila(canopyCoverFileName)
+report(groundCover, groundCoverFileName)
+#~ aguila(groundCoverFileName)
+report(kSat, kSatFileName)
+#~ aguila(kSatFileName)
+report(cohesion, cohesionFileName)
+#~ aguila(cohesionFileName)
+report(erodibilityK, erodibilityFileName)
+#~ aguila(erodibilityKFileName)  
+report(factorC, factorCFileName)
+#~ aguila(factorCFileName)  
 
+
+print("Input parameters/maps are ready.")
 
 
 ########################################################################
