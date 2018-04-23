@@ -301,12 +301,14 @@ resistanceZ = (1.0 / (0.5 * cohesion))
 
 # soil particle detachment (kg.m-2) by runoff (symbolized as H  in Morgan, 2001, Equation 10)
 # - for a year
-detachmentByRunoffH = resistanceZ * pow(runoffYearMilimeter, 1.5) * sin(slopeS) * (1.0 - groundCover) * 0.001
+#~ detachmentByRunoffH = resistanceZ * pow(runoffYearMilimeter, 1.5) * sin(slopeS) * (1.0 - groundCover) * 0.001
+detachmentByRunoffH = resistanceZ * pow(runoffYear, 1.5) * sin(slopeS) * (1.0 - groundCover) * 0.001
 #~ aguila(detachmentByRunoffH)
 
 # transport capacity (kg.m-2) of erosion (symbolized as TC in Morgan, 2001, Equation 12)
 # - for a year
-transportCapacity = factorC * pow(runoffYearMilimeter, 2.0) * sin(slopeS) * 0.001
+#~ transportCapacity = factorC * pow(runoffYearMilimeter, 2.0) * sin(slopeS) * 0.001
+transportCapacity = factorC * pow(runoffYear, 2.0) * sin(slopeS) * 0.001
 
 # estimate of total particle detachment (kg.m-2) - not limited by transport capacity
 # - for a year
