@@ -90,7 +90,7 @@ effectiveRainfallYearFileName = "outputs/effective_rainfall_m_per_year.map"
 # - annual leaf drainage (m.year-1): throughfall through canopy/leaf
 leafDrainageYearFileName = "outputs/leaf_drainage_m_per_year.map"
 # - annual direct throughfall (m.year-1)
-directThroughfallYearFileName = "outputs/leaf_drainage_m_per_year.map"
+directThroughfallYearFileName = "outputs/direct_throughfall_m_per_year.map"
 # - annual detachment by raindrop/splash (kg.m-2.year-1) - not limited by transport capacity
 detachmentByRaindropFileName = "outputs/splash_detachment_kg_per_m2_per_year.map"
 # - annual detachment by runoff (kg.m-2.year-1) - not limited by transport capacity
