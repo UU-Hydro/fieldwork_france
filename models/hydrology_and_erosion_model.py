@@ -351,7 +351,7 @@ report(effectiveRainfallYear, effectiveRainfallYearFileName)
 report(leafDrainageYear, leafDrainageYearFileName)
 #~ aguila(leafDrainageYearFileName)
 # - annual direct throughfall (m.year-1)
-report(directThroughfall, directThroughfallYearFileName)
+report(directThroughfallYear, directThroughfallYearFileName)
 #~ aguila(directThroughfallYearFileName)
 # - annual detachment by raindrop/splash - not limited by transport capacity
 report(detachmentByRaindropF, detachmentByRaindropFileName)
