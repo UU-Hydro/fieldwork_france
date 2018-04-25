@@ -284,7 +284,7 @@ print("Hydrology calculation is done.")
 fractionInterceptedRain = (precipitationEvent - netRainfall) / precipitationEvent
 
 # annual effective/net rainfall reaching the soil (m.year-1)
-effectiveRainfallYear = fractionInterceptedRain * precipitationYear
+effectiveRainfallYear = (1.0 - fractionInterceptedRain) * precipitationYear
 
 # annual leaf drainage (m.year-1): throughfall through canopy/leaf
 leafDrainageYear = effectiveRainfallYear * canopyCover
