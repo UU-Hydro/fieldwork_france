@@ -1,0 +1,310 @@
+COPYRIGHT_CSS
+
+dummy{} /* Some browsers ignore the first line */
+
+body
+{
+	font:normal 70% Tahoma, Sans Serif, Arial;
+}
+/* The following elements don't implicit inherit the font properties from their parent elements so explicit set them	*/
+SELECT,INPUT,TEXTAREA,BUTTON,LABEL
+{
+	font-size:100%;
+	font-family:Tahoma, Sans Serif, Arial;
+}
+/* We cannot simply set the font-size of a TABLE as "100". The font in the table will get larger than that in the parent
+element in high contrast. The work around here is not setting the font-size of the TABLE (thus the font will be the 
+default size of the browser) but set the font in the TD and TH. see bug #92237*/
+TD, TH
+{
+	font-size:70%;
+}
+/* The h1 (header) and the th (table header) are supposed only to be used by the screen reader. Visually they should looks
+like the same with normal text.*/
+h1
+{
+	font-size:100%;
+	font-weight:normal;
+}
+th
+{
+	font-weight:normal;
+}
+.bld
+{
+	font-weight:bold;
+}
+table.mnTbl td.spc
+{		
+	/* We need this 1pt font here to get the cell borders */
+	font-size: 1pt;
+}
+table#tblCnf td.bld
+{
+	font-weight:bold;
+}
+div.divNoRR
+{
+	font-weight:bold;
+}
+td.tdLogoB
+{
+	font-size:60%;
+}
+/* page text including the current page and links to other pages*/
+table.tbhd td.pTxt, table.tbft td.pTxt
+{
+	font-weight:bold;
+}
+/* page links*/
+table.tbhd td.pTxt a, table.tbft td.pTxt a
+{
+	font-weight:normal;
+}
+/* required/ optional/ resource/when/ location*/
+td.hdmsb
+{
+	font-weight:bold;
+}
+table.pnt
+{
+	font-weight:bold;
+}
+/* Collapsed Primary Navigation */
+table.pntc
+{
+	font-weight:bold;
+}
+table.snt td.fld span.unrd
+{
+	font-weight:normal;
+}
+table.snt td.fld span.itm
+{
+	font-weight:normal;
+}
+/* Calendar List header */
+table.snt td.clhdr
+{
+	font-weight:bold;
+}
+table.snt td.bld
+{
+	font-weight:bold;
+}
+/* Subject */
+td.sub 
+{
+	font-weight:bold;
+	font-size:110%;
+}
+/* Sender */
+td.frm 
+{ 
+	font-size:100%;
+}
+/* To, Cc, sent-time*/
+td.hdtxt
+{
+	font-weight:bold;
+}
+td.updnw
+{
+	font-style:italic;
+}
+span.updnw
+{
+	font-style:italic;
+}
+div.updold
+{
+	font-style:italic;
+}
+table.dsgt td.dt
+{
+	font-weight:bold;
+}
+/* Open as web page link in attachment well */
+span.wvsn
+{
+	font-size:85%;
+}
+table.sctb td.sgs label.ll
+{
+	font-weight:bold;
+}
+table.sctb td.sgs label.lr
+{
+	font-weight:bold;
+}
+table.bopt td.hdr
+{
+	font:bold 110% Arial;
+}
+table.edtMsg td.rtspc
+{
+	/* We need this 1pt font here to get the right side spacing */
+	font-size: 1pt;
+}
+table.bdyt td.rtspc
+{
+	/* We need this 1pt font here to get the right borders */
+	font-size: 1pt;
+}
+table.rcptWll td span.rwDL
+{
+	font-weight:bold;
+}
+table.rcptWll td span span.sq
+{
+	font-weight:normal;
+}
+table.anrit td.hdr
+{
+	font-weight: bold;
+}
+table.rcntRcpt td.msg
+{
+	font-style:italic;
+}
+table.attchList th
+{
+	font-weight:normal;
+}
+/* distribution list  */
+table.rw span.spndl, table.lvw a.lvwdl
+{
+	font-weight:bold;
+}
+table.pHd td.dn
+{
+	font-weight:bold;
+	font-size:80%;
+}
+table.pHd span.txb
+{
+	font-weight:bold;
+}
+/* side headers */
+table.pDtls td.hd, table.pAddr td.hd
+{
+	font-weight:bold;
+}
+/* Message when there are no details present under the header */
+table.pDtls td.nodtls
+{
+	font-style:italic;
+}
+/* Message when webaddress is not a link */
+table.pDtls td.nolnk
+{
+	font-style:italic;
+}
+table.drpts a.dl
+{
+	font-weight:bold;
+}
+table.pDtls span.brkt
+{
+	font-weight:normal;
+}
+table.w100 td.oofF
+{
+	font-weight:bold;
+}
+/* Cell to contain hours in time strip */
+table.cdayvw td.tm
+{
+	font-weight:bold;
+	font-size:100%;
+}
+table.cdayvw td.tm span
+{
+	font-weight:normal;
+	font-size:70%;
+}
+/* Cell to contain day header */
+table.cdayvw td.cvhd
+{
+	font-weight:bold;
+}
+table.cdayvw td.cvhd span
+{
+	font-weight:bold;
+	font-size:110%;
+}
+able.apptsum td.ast
+{
+	font-weight:bold;
+}
+/* Link from subject */
+table.vis td.txt a
+{
+	font-weight:bold;
+}
+table#evt
+{
+	font-weight:bold;
+}
+table.dpht
+{
+	font-weight:bold;
+}
+/* Week */
+table.dp td.wk
+{
+	font-size:63%;
+}
+/* Free/Busy */
+table.dp td.fb
+{
+	font-weight:bold;
+}
+table.dphst
+{
+	font-weight:bold;
+}
+/* Week */
+table.dpst td.wk
+{
+	font-size:63%;
+}
+/* Free/Busy */
+table.dpst td.fb
+{
+	font-weight:bold;
+}
+/* Deleted contact folder header */
+table.sncts td.mycts
+{
+	font-weight:bold;
+}
+/* main table */
+table#cntedt
+{
+	font-family:Tahoma;
+}
+/* bold font */
+.cntFB
+{
+	font-weight:bold;
+}
+/* column title td */
+td.cntCT
+{
+	font-weight:bold;
+}
+/* column title td with image icon*/
+td.cntImCT
+{
+	font-weight:bold;
+}
+table.bopt td.jmt
+{
+	font-weight:bold;
+}
+table.edtMsg td.rtspc
+{
+	/* We need this 1pt font here to get the right side spacing */
+	font-size: 1pt;
+}

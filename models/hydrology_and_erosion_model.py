@@ -55,6 +55,10 @@ regolithTable = "inputs/regolith_table.txt"
 # - see also "inputs/regolith_table_readme.txt"
 
 
+# other input:
+# - a maximum (annual) limit of flow/runoff detachment (kg.m-2.year-1) ; needed to mask out unrealitic values (particularly in streams/gullies)
+maxLimitDetachmentByRunoff = 999.
+
 
 ########################################################################
 
@@ -67,33 +71,26 @@ regolithTable = "inputs/regolith_table.txt"
 # file names for parameters derived during the model calculation
 # - slope (m.m-1), estimated from elevation (dem) 
 slopeFileName = "outputs/slope_m_per_m.map"
-# - vegetationCover (dimensionless, fraction 0 to 1)
-vegetationCoverFileName = "outputs/vegetation_cover_fraction.map"
-# - leafAreaIndex (m2.m-2)
-leafAreaIndexFileName = "outputs/leaf_area_index_m2_per_m2.map"
-# - plantHeight (m)
-plantHeightFileName = "outputs/plant_height_m.map"
-# - canopyCover (dimensionless, fraction 0 to 1)
-canopyCoverFileName = "outputs/canopy_cover_fraction.map"
-# - groundCover (dimensionless, fraction 0 to 1)
-groundCoverFileName = "outputs/ground_cover_fraction.map"
-# - factorC: this factor is to take account tillage practices and levels of crop residue retention - needed to estimate transport capacity - Equation 12 in Morgan, 2001
-factorCFileName = "outputs/factor_c_transport_capacity.map"
 # - kSat: saturated conductivity of the top soil (m.hr-1)
 kSatFileName = "outputs/soil_saturated_conductivity_m_per_hour.map"
-# - cohesion: soil cohesion (unit: kPa) of the soil - symbolyzed as COH in Morgan, 2001
-cohesionFileName = "outputs/soil_cohesion_kilo_pascal.map"
-# - erodibilityK: erodibility (g.J-1) of the soil - symbolized as K in Morgan, 2001, Equation 9
-erodibilityFileName = "outputs/soil_erodibility_gram_per_joule.map"
-
+# - canopyInterceptionCapacity (m)
+canopyInterceptionCapacityFileName = "outputs/canopy_interception_capacity_m.map"
 
 # model simulation output file names:
 # - annual precipitation (m.year-1)
 precipitationYearFileName = "outputs/precipitation_m_per_year.map"
 # - annual infiltration (m.year-1)
 infiltrationYearFileName = "outputs/infiltration_m_per_year.map"
-# - annual runoff (m.year-1)
+# - annual local runoff (m.year-1)
+localRunoffYearFileName = "outputs/local_runoff_m_per_year.map"
+# - annual (accumulated) runoff (m.year-1)
 runoffYearFileName = "outputs/runoff_m_per_year.map"
+# - annual effective/net rainfall reaching the soil (m.year-1)
+effectiveRainfallYearFileName = "outputs/effective_rainfall_m_per_year.map"
+# - annual leaf drainage (m.year-1): throughfall through canopy/leaf
+leafDrainageYearFileName = "outputs/leaf_drainage_m_per_year.map"
+# - annual direct throughfall (m.year-1)
+directThroughfallYearFileName = "outputs/direct_throughfall_m_per_year.map"
 # - annual detachment by raindrop/splash (kg.m-2.year-1) - not limited by transport capacity
 detachmentByRaindropFileName = "outputs/splash_detachment_kg_per_m2_per_year.map"
 # - annual detachment by runoff (kg.m-2.year-1) - not limited by transport capacity
@@ -105,6 +102,23 @@ transportCapacityFileName = "outputs/transport_capacity_kg_per_m2_per_year.map"
 # - annual total erosion (kg.m-2.year-1) - limited by transport capacity
 erosionFileName = "outputs/erosion_kg_per_m2_per_year.map"
 
+#~ # file names for additional output maps ; Note: Comment (#) signs indicate no active. 
+#~ # - vegetationCover (dimensionless, fraction 0 to 1)
+#~ vegetationCoverFileName = "outputs/vegetation_cover_fraction.map"
+#~ # - leafAreaIndex (m2.m-2)
+#~ leafAreaIndexFileName = "outputs/leaf_area_index_m2_per_m2.map"
+#~ # - plantHeight (m)
+#~ plantHeightFileName = "outputs/plant_height_m.map"
+#~ # - canopyCover (dimensionless, fraction 0 to 1)
+#~ canopyCoverFileName = "outputs/canopy_cover_fraction.map"
+#~ # - groundCover (dimensionless, fraction 0 to 1)
+#~ groundCoverFileName = "outputs/ground_cover_fraction.map"
+#~ # - factorC: this factor is to take account tillage practices and levels of crop residue retention - needed to estimate transport capacity - Equation 12 in Morgan, 2001
+#~ factorCFileName = "outputs/factor_c_transport_capacity.map"
+#~ # - cohesion: soil cohesion (unit: kPa) of the soil - symbolyzed as COH in Morgan, 2001
+#~ cohesionFileName = "outputs/soil_cohesion_kilo_pascal.map"
+#~ # - erodibilityK: erodibility (g.J-1) of the soil - symbolized as K in Morgan, 2001, Equation 9
+#~ erodibilityFileName = "outputs/soil_erodibility_gram_per_joule.map"
 
 
 
@@ -167,25 +181,26 @@ erodibilityK = lookupscalar(regolithTable, 3, regolithCode)
 # - needed to estimate transport capacity (Equation 12 in Morgan, 2001)
 factorC = spatial(scalar(valueForFactorC))
 
-
-# reporting/saving model vegetation and regolith parameters to pcraster files (and displaying them via aguila)
-report(vegetationCover, vegetationCoverFileName)
-#~ aguila(vegetationCoverFileName)
-report(leafAreaIndex, leafAreaIndexFileName)
-#~ aguila(leafAreaIndexFileName)
-report(plantHeight, plantHeightFileName)
-#~ aguila(plantHeightFileName)
-report(canopyCover, canopyCoverFileName)
-#~ aguila(canopyCoverFileName)
-report(groundCover, groundCoverFileName)
-#~ aguila(groundCoverFileName)
+# reporting/saving kSat to a pcraster file (and display it via aguila)
 report(kSat, kSatFileName)
 #~ aguila(kSatFileName)
-report(cohesion, cohesionFileName)
+
+#~ # reporting/saving model (e.g. vegetation and regolith) parameters to pcraster files (and displaying them via aguila)
+#~ report(vegetationCover, vegetationCoverFileName)
+#~ aguila(vegetationCoverFileName)
+#~ report(leafAreaIndex, leafAreaIndexFileName)
+#~ aguila(leafAreaIndexFileName)
+#~ report(plantHeight, plantHeightFileName)
+#~ aguila(plantHeightFileName)
+#~ report(canopyCover, canopyCoverFileName)
+#~ aguila(canopyCoverFileName)
+#~ report(groundCover, groundCoverFileName)
+#~ aguila(groundCoverFileName)
+#~ report(cohesion, cohesionFileName)
 #~ aguila(cohesionFileName)
-report(erodibilityK, erodibilityFileName)
+#~ report(erodibilityK, erodibilityFileName)
 #~ aguila(erodibilityKFileName)  
-report(factorC, factorCFileName)
+#~ report(factorC, factorCFileName)
 #~ aguila(factorCFileName)  
 
 
@@ -201,8 +216,11 @@ print("Input parameters/maps are ready.")
 precipitationEvent = precipitationIntensityEvent * precipitationDuration
 
 # interception storage capacity
-# - maximum content of interception store (m, for vegetated part of cell), from reader #TODO: Need reference 
+# - maximum content of interception store (m, for vegetated part of cell), from reader, see also e.g. von Hoyningen-Huene (1981) and Kozak et al. (2007)
 canopyInterceptionCapacity = max(0.935 + 0.498 * leafAreaIndex - 0.00575 * sqr(leafAreaIndex), 0.0000001) / 1000.
+# - saving it to file (and display it using aguila)
+report(canopyInterceptionCapacity, canopyInterceptionCapacityFileName)
+#~ aguila(canopyInterceptionCapacityFileName)
 
 # amount of water reaching the soil (m) during the event
 # - throughfall (m, for vegetated part of cell)
@@ -213,6 +231,9 @@ netRainfall = vegetationCover * throughfall + (1.0 - vegetationCover) * precipit
 # infiltration capacity (based on the saturated conductivity of the top soil (m.hr-1), measured by students or from table
 # - infiltration capacity of the event (m)
 infiltrationCapacity = kSat * precipitationDuration
+
+# local runoff (m): local amount of water reaching soil and above infiltration capacity
+localRunoffEvent = max(0.0, netRainfall - infiltrationCapacity)
 
 # runoff (accumulated) and actual infiltration during the event
 # - runoff (m) - accumulated along ldd
@@ -226,6 +247,8 @@ infiltrationEvent = accuthresholdstate(ldd, netRainfall, infiltrationCapacity)
 # total values over a year
 ########################################################################
 
+# local runoff in a year (m.year-1)
+localRunoffYear = localRunoffEvent * numberOfEvents
 # runoff in a year (m.year-1) - accumulated along ldd
 runoffYear = runoffEvent * numberOfEvents
 # infiltration in a year (m.year-1)
@@ -234,15 +257,19 @@ infiltrationYear = infiltrationEvent * numberOfEvents
 precipitationYear = precipitationEvent * numberOfEvents
 
 # reporting/saving yearly values to pcraster files (and displaying them via aguila) - only in the mask area (area of interest)
-# - runoff
+# - annual local runoff 
+localRunoffYear = ifthen(mask, scalar(localRunoffYear))
+report(localRunoffYear, localRunoffYearFileName)
+#~ aguila(localRunoffYearFileName)
+# - annual runoff - accumulated along ldd
 runoffYear = ifthen(mask, scalar(runoffYear))
 report(runoffYear, runoffYearFileName)
 #~ aguila(runoffYearFileName)
-# - infiltration
+# - annual infiltration
 infiltrationYear = ifthen(mask, scalar(infiltrationYear))
 report(infiltrationYear, infiltrationYearFileName)
 #~ aguila(infiltrationYearFileName)
-# - precipitation
+# - annual precipitation
 precipitationYear = ifthen(mask, scalar(precipitationYear))
 report(precipitationYear, precipitationYearFileName)
 #~ aguila(precipitationYearFileName)
@@ -257,7 +284,7 @@ print("Hydrology calculation is done.")
 fractionInterceptedRain = (precipitationEvent - netRainfall) / precipitationEvent
 
 # annual effective/net rainfall reaching the soil (m.year-1)
-effectiveRainfallYear = fractionInterceptedRain * precipitationYear
+effectiveRainfallYear = (1.0 - fractionInterceptedRain) * precipitationYear
 
 # annual leaf drainage (m.year-1): throughfall through canopy/leaf
 leafDrainageYear = effectiveRainfallYear * canopyCover
@@ -273,17 +300,17 @@ precipitationIntensityEventMilimeterPerHour = precipitationIntensityEvent * 1000
 # - energy by direct throughfall (Morgan, 2001, Equation 4 and Table 2, data from Zanchi and Torri, 1980)
 kineticEnergyByDirectThroughfall = \
                directThroughfallYear * (9.81 + 11.25 * log10(precipitationIntensityEventMilimeterPerHour)) 
-# - energy by leaf drainage                                             #TODO: Need reference. Morgan 2001 EQ 5 ???
+# - energy by leaf drainage (Morgan 2001, Equation 5)
 kineticEnergyByLeafDrainage = (15.8 * plantHeight ** 0.5) - 5.87
 kineticEnergyByLeafDrainage = max(0.0, kineticEnergyByLeafDrainage)
 # - total kinetic energy
 kineticEnergy = kineticEnergyByDirectThroughfall + kineticEnergyByLeafDrainage
 
-# soil particle detachment (kg.m-2) by raindrop impact (symbolized as F in Morgan, 2001, Equation 9)
+# annual soil particle detachment (kg.m-2.year-1) by raindrop impact (symbolized as F in Morgan, 2001, Equation 9)
 # - for a year
 detachmentByRaindropF = erodibilityK * kineticEnergy * 0.001 
 
-# annual runoff in milimeter
+# annual runoff in milimeter (mm.year-1)
 runoffYearMilimeter = runoffYear * 1000.
 
 # slope steepness
@@ -299,27 +326,34 @@ slopeS = atan(slope)
 # - resistance of the soil (symbolized as Z in Morgan, 2001, Equation 10)
 resistanceZ = (1.0 / (0.5 * cohesion))
 
-# soil particle detachment (kg.m-2) by runoff (symbolized as H  in Morgan, 2001, Equation 10)
+# annual soil particle detachment (kg.m-2.year-1) by runoff, symbolized as H  in Morgan, 2001, Equation 10 - modified by Wiebe (runoffYear in meter)
 # - for a year
-#~ detachmentByRunoffH = resistanceZ * pow(runoffYearMilimeter, 1.5) * sin(slopeS) * (1.0 - groundCover) * 0.001
-detachmentByRunoffH = resistanceZ * pow(runoffYear, 1.5) * sin(slopeS) * (1.0 - groundCover) * 0.001
-#~ aguila(detachmentByRunoffH)
+detachmentByRunoffH = resistanceZ * pow(runoffYear, 1.5) * sin(slopeS) * (1.0 - groundCover)
+# - constrained by a maximum (annual) limit of flow/runoff detachment (kg.m-2.year-1)
+detachmentByRunoffH = min(maxLimitDetachmentByRunoff, detachmentByRunoffH)
 
-# transport capacity (kg.m-2) of erosion (symbolized as TC in Morgan, 2001, Equation 12)
-# - for a year
-#~ transportCapacity = factorC * pow(runoffYearMilimeter, 2.0) * sin(slopeS) * 0.001
-transportCapacity = factorC * pow(runoffYear, 2.0) * sin(slopeS) * 0.001
+# annual transport capacity (kg.m-2.year-1) of erosion, symbolized as TC in Morgan, 2001, Equation 12 - modified by Wiebe (runoffYear in meter)
+transportCapacity = factorC * pow(runoffYear, 2.0) * sin(slopeS)
 
-# estimate of total particle detachment (kg.m-2) - not limited by transport capacity
+# annual estimate of total particle detachment (kg.m-2.year-1) - not limited by transport capacity
 # - for a year
 totalDetachment = detachmentByRaindropF + detachmentByRunoffH 
 
-# limit erosion (kg.m-2) by transport capacity
+# limit annual erosion (kg.m-2.year-1) by annual transport capacity
 # - for a year
 erosion = min(transportCapacity, totalDetachment)
 
-# reporting/saving yearly values to pcraster files (and displaying them via aguila) - only in the mask area (area of interest)
-# - detachment by raindrop/splash - not limited by transport capacity
+# reporting/saving yearly values to pcraster files (and displaying them via aguila)
+# - annual effective/net rainfall reaching the soil
+report(effectiveRainfallYear, effectiveRainfallYearFileName)
+#~ aguila(effectiveRainfallYearFileName)
+# - annual leaf drainage: throughfall through canopy/leaf
+report(leafDrainageYear, leafDrainageYearFileName)
+#~ aguila(leafDrainageYearFileName)
+# - annual direct throughfall (m.year-1)
+report(directThroughfallYear, directThroughfallYearFileName)
+#~ aguila(directThroughfallYearFileName)
+# - annual detachment by raindrop/splash - not limited by transport capacity
 report(detachmentByRaindropF, detachmentByRaindropFileName)
 #~ aguila(detachmentByRaindropFileName)
 # - detachment by runoff - not limited by transport capacity
@@ -335,7 +369,9 @@ report(transportCapacity, transportCapacityFileName)
 report(erosion, erosionFileName)
 #~ aguila(erosionFileName)
 
+
 print("Soil erosion calculation is done.")
+
 
 # Reporting calculation time needed (seconds) 
 calculation_time = round(py_time.time() - start_time, 2)
